@@ -1,10 +1,6 @@
-import ru.bulash.creatures.Cat;
-import ru.bulash.creatures.Creature;
-import ru.bulash.creatures.Human;
-import ru.bulash.creatures.Robot;
+package ru.bulash.creatures;
+
 import ru.bulash.tools.Tool;
-import ru.bulash.tools.Track;
-import ru.bulash.tools.Wall;
 
 /*
 Создайте три класса Человек, Кот, Робот, которые не наследуются от одного класса. Эти классы должны уметь бегать и прыгать (методы просто выводят информацию о действии в консоль).
@@ -12,36 +8,50 @@ import ru.bulash.tools.Wall;
 Создайте два массива: с участниками и препятствиями, и заставьте всех участников пройти этот набор препятствий.
 У препятствий есть длина (для дорожки) или высота (для стены), а участников ограничения на бег и прыжки. Если участник не смог пройти одно из препятствий, то дальше по списку он препятствий не идет.
 */
-public class Main {
-	public static void main(String[] args) {
-		Creature creatures[] = {
-				new Human("Василий Петрович", 100, 2),
-				new Human("Сергей Бубка", 200, 6),
-				new Robot("R2D3", 20, 1),
-				new Robot("Дэниел Р. Оливо", 800, 2),
-				new Cat("Васька", 50, 1)
-		};
+// Человек
+public class Human implements Creature {
+	private String name;
+	private int distance;
+	private int height;
 
-		Tool tools[] = {
-				new Track(40),
-				new Wall(1),
-				new Track(150),
-				new Track(200),
-				new Wall(1)
-		};
+	public Human(String name, int distance, int height) {
+		this.name = name;
+		this.distance = distance;
+		this.height = height;
+	}
 
-		// Поехали
-		for (Creature creature: creatures) {
-			boolean passed = true;
-			for (Tool tool: tools) {
-				passed = passed && creature.action(tool);
-			}
-			if(passed) {
-				creature.showDone();
-			} else {
-				creature.showDidnt();
-			}
-			System.out.println();
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public String getTitle() {
+		return "Человек";
+	}
+
+	@Override
+	public boolean run(Tool tool) {
+		this.showToolAction(tool);
+		if(tool.getLength() > this.distance) {
+			System.out.printf("Человек не смог пробежать %d - предел %d\n", tool.getLength(), this.distance);
+			return false;
+		} else {
+			System.out.printf("Человек пробежал %d\n", tool.getLength());
+			this.distance -= tool.getLength();	// Накопительный эффект
+			return true;
+		}
+	}
+
+	@Override
+	public boolean jump(Tool tool) {
+		this.showToolAction(tool);
+		if(tool.getLength() > this.height) {
+			System.out.printf("Человек не смог прыгнуть вверх на %d - предел %d\n", tool.getLength(), this.height);
+			return false;
+		} else {
+			System.out.printf("Человек прыгнул вверх на %d\n", tool.getLength());
+			return true;
 		}
 	}
 }
